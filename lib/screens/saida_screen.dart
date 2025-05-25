@@ -4,12 +4,6 @@ import '../providers/transaction_provider.dart';
 import '../widgets/financial_summary.dart';
 import '../models/transaction.dart';
 
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import '../providers/transaction_provider.dart';
-import '../widgets/financial_summary.dart';
-import '../models/transaction.dart';
-
 class SaidaScreen extends StatelessWidget {
   const SaidaScreen({super.key});
 
@@ -19,50 +13,30 @@ class SaidaScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(title: const Text('Saídas')),
-      body: Column(
-        children: [
-          const FinancialSummary(),
-          const SaidaForm(),
-          Expanded(
-            child: saidas.isEmpty
-                ? const Center(
-              child: Padding(
-                padding: EdgeInsets.only(top: 20),
-                child: Text('Nenhuma saída registrada.'),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              const FinancialSummary(),
+              const SaidaForm(),
+              ListView.separated(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                padding: const EdgeInsets.only(bottom: 20),
+                itemCount: saidas.length,
+                itemBuilder: (ctx, index) {
+                  return const SizedBox.shrink(); // ou TransactionItem(...)
+                },
+                separatorBuilder: (context, index) => const SizedBox.shrink(),
               ),
-            )
-                : ListView.separated(
-              padding: const EdgeInsets.only(bottom: 20),
-              itemCount: saidas.length,
-              itemBuilder: (ctx, index) {
-                final tx = saidas[index];
-                return Card(
-                  margin: const EdgeInsets.symmetric(horizontal: 16),
-                  elevation: 3,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: ListTile(
-                    leading: const Icon(Icons.arrow_upward, color: Colors.red),
-                    title: Text(tx.title, style: const TextStyle(fontWeight: FontWeight.bold)),
-                    subtitle: Text(
-                      '${tx.category} • ${tx.date.toLocal().toString().split(' ')[0]}',
-                    ),
-                    trailing: Text(
-                      'R\$ ${tx.amount.toStringAsFixed(2)}',
-                      style: const TextStyle(color: Colors.red),
-                    ),
-                  ),
-                );
-              },
-              separatorBuilder: (context, index) => const SizedBox(height: 8),
-            ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
 }
+
 
 class SaidaForm extends StatefulWidget {
   const SaidaForm({super.key});
@@ -74,12 +48,11 @@ class SaidaForm extends StatefulWidget {
 class _SaidaFormState extends State<SaidaForm> {
   final _titleController = TextEditingController();
   final _amountController = TextEditingController();
-  String _selectedCategory = 'Alimentação'; // Categoria padrão
-
-  // Lista de categorias para despesas
+  String _selectedCategory = 'Alimentação';
   final List<String> _saidaCategories = [
     'Alimentação',
     'Transporte',
+    'Saúde',
     'Lazer',
     'Educação',
     'Outros',
@@ -88,6 +61,16 @@ class _SaidaFormState extends State<SaidaForm> {
   void _submit() {
     final title = _titleController.text;
     final amount = double.tryParse(_amountController.text) ?? 0.0;
+    final provider = Provider.of<TransactionProvider>(context, listen: false);
+
+    // Calcula o saldo atual
+    final saldoAtual = provider.calculateBalance();
+
+    // Validação do saldo
+    if (amount > saldoAtual) {
+      _showSaldoInsuficienteDialog(saldoAtual);
+      return;
+    }
 
     if (title.isEmpty || amount <= 0) return;
 
@@ -96,14 +79,33 @@ class _SaidaFormState extends State<SaidaForm> {
       title: title,
       amount: amount,
       date: DateTime.now(),
-      category: _selectedCategory, // Usa a categoria selecionada
+      category: _selectedCategory,
       type: TransactionType.saida,
       isFutureGoal: false,
     );
 
-    Provider.of<TransactionProvider>(context, listen: false).addTransaction(newTx);
+    provider.addTransaction(newTx);
     _titleController.clear();
     _amountController.clear();
+  }
+
+  void _showSaldoInsuficienteDialog(double saldoAtual) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Saldo Insuficiente'),
+        content: Text(
+          'Você não possui saldo suficiente para esta despesa.\n'
+              'Saldo disponível: R\$ ${saldoAtual.toStringAsFixed(2)}',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(),
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -197,6 +199,39 @@ class _SaidaFormState extends State<SaidaForm> {
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+
+class TransactionItem extends StatelessWidget {
+  final Transaction transaction;
+  final VoidCallback onDelete;
+
+  const TransactionItem({
+    super.key,
+    required this.transaction,
+    required this.onDelete,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: ListTile(
+        title: Text(transaction.title),
+        subtitle: Text(
+          '${transaction.date.day}/${transaction.date.month}/${transaction.date.year} - ${transaction.category}',
+        ),
+        trailing: Text(
+          '- R\$${transaction.amount.toStringAsFixed(2)}',
+          style: const TextStyle(color: Colors.red),
+        ),
+        leading: IconButton(
+          icon: const Icon(Icons.delete, color: Colors.red),
+          onPressed: onDelete,
         ),
       ),
     );

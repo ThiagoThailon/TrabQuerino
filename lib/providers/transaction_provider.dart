@@ -22,12 +22,24 @@ class TransactionProvider with ChangeNotifier {
   double get totalEntradas => entradas.fold(0.0, (sum, tx) => sum + tx.amount);
   double get totalSaidas => saidas.fold(0.0, (sum, tx) => sum + tx.amount);
   double get saldo => totalEntradas - totalSaidas;
+  double get totalInvestido => investimentos.fold(0.0, (sum, tx) => sum + tx.amount);
+  double get saldoDisponivelInvestimento => saldo;
+
+  double calculateBalance() {
+    final totalEntradas = entradas.fold(0.0, (sum, tx) => sum + tx.amount);
+    final totalSaidas = saidas.fold(0.0, (sum, tx) => sum + tx.amount);
+    return totalEntradas - totalSaidas;}
 
   TransactionProvider() {
     loadTransactions();
   }
 
   Future<void> addTransaction(Transaction tx) async {
+    if (tx.isFutureGoal && tx.amount > saldoDisponivelInvestimento) {
+      throw Exception('Valor do investimento (R\$${tx.amount.toStringAsFixed(2)}) '
+          'excede o saldo disponível (R\$${saldoDisponivelInvestimento.toStringAsFixed(2)})');
+    }
+
     _transactions.add(tx);
     await saveTransactions();
     notifyListeners();
@@ -36,6 +48,10 @@ class TransactionProvider with ChangeNotifier {
   Future<void> updateTransaction(String id, Transaction updatedTx) async {
     final index = _transactions.indexWhere((tx) => tx.id == id);
     if (index >= 0) {
+      if (updatedTx.isFutureGoal && updatedTx.amount > saldoDisponivelInvestimento + _transactions[index].amount) {
+        throw Exception('Valor atualizado excede o saldo disponível');
+      }
+
       _transactions[index] = updatedTx;
       await saveTransactions();
       notifyListeners();
@@ -45,7 +61,7 @@ class TransactionProvider with ChangeNotifier {
   Future<void> saveTransactions() async {
     final prefs = await SharedPreferences.getInstance();
     final txListJson = _transactions.map((tx) => tx.toJson()).toList();
-    prefs.setString('transactions', jsonEncode(txListJson));
+    await prefs.setString('transactions', jsonEncode(txListJson));
   }
 
   Future<void> loadTransactions() async {

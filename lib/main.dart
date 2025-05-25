@@ -5,7 +5,7 @@ import 'screens/entrada_screen.dart';
 import 'screens/saida_screen.dart';
 import 'screens/investimento_screen.dart';
 import 'screens/grafico_screen.dart';
-
+import 'screens/history_screen.dart';
 void main() {
   runApp(const EWalletApp());
 }
@@ -47,6 +47,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
     SaidaScreen(),
     InvestimentoScreen(),
     GraficoScreen(),
+    HistoryScreen(),
   ];
 
   void _onItemTapped(int index) {
@@ -82,6 +83,12 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
             label: 'Gráfico',
 
           ),
+          BottomNavigationBarItem(
+          icon:  Icon(Icons.history),
+          label: 'Transações',
+          ),
+
+
         ],
         currentIndex: _selectedIndex,
         selectedItemColor: Colors.indigo,

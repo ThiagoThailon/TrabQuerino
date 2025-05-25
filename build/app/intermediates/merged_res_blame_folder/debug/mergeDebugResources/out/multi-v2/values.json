@@ -40,25 +40,6 @@
                     }
                 },
                 {
-                    "source": "C:\\Users\\StayWithMe\\Pictures\\ewallet-main\\android\\app\\src\\main\\res\\values\\styles.xml",
-                    "from": {
-                        "startLines": "3,14",
-                        "startColumns": "4,4",
-                        "startOffsets": "173,818",
-                        "endLines": "7,16",
-                        "endColumns": "12,12",
-                        "endOffsets": "476,982"
-                    },
-                    "to": {
-                        "startLines": "1488,1492",
-                        "startColumns": "4,4",
-                        "startOffsets": "93582,93763",
-                        "endLines": "1491,1494",
-                        "endColumns": "12,12",
-                        "endOffsets": "93758,93927"
-                    }
-                },
-                {
                     "source": "C:\\Users\\StayWithMe\\.gradle\\caches\\8.10.2\\transforms\\5093ab42d2307deb2d7ac0b7f5718c38\\transformed\\jetified-window-1.2.0\\res\\values\\values.xml",
                     "from": {
                         "startLines": "2,3,9,17,25,37,43,49,50,51,52,53,54,55,61,66,74,89",
@@ -75,6 +56,25 @@
                         "endLines": "2,10,18,26,41,47,53,54,55,56,57,58,300,2184,2189,3478,3493,3509",
                         "endColumns": "58,11,11,11,11,11,11,52,59,51,44,38,59,24,24,24,24,24",
                         "endOffsets": "159,448,667,886,1354,1542,1729,1782,1842,1894,1939,1978,18149,138705,138863,183410,184024,184678"
+                    }
+                },
+                {
+                    "source": "C:\\Users\\StayWithMe\\Desktop\\ewallet-main\\android\\app\\src\\main\\res\\values\\styles.xml",
+                    "from": {
+                        "startLines": "3,14",
+                        "startColumns": "4,4",
+                        "startOffsets": "176,832",
+                        "endLines": "7,16",
+                        "endColumns": "12,12",
+                        "endOffsets": "483,998"
+                    },
+                    "to": {
+                        "startLines": "1488,1492",
+                        "startColumns": "4,4",
+                        "startOffsets": "93582,93763",
+                        "endLines": "1491,1494",
+                        "endColumns": "12,12",
+                        "endOffsets": "93758,93927"
                     }
                 },
                 {

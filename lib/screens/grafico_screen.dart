@@ -20,9 +20,8 @@ class GraficoScreen extends StatelessWidget {
       'Lazer': Colors.green[400]!,
       'Educação': Colors.purple[400]!,
       'Outros': Colors.orange[400]!,
-      'Salário': Colors.teal[400]!,
-      'Freela': Colors.pink[400]!,
-      'Rendimentos': Colors.indigo[400]!,
+      'Saúde': Colors.teal[400]!,
+
     };
 
     if (saidas.isEmpty) {
