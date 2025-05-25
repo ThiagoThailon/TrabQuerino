@@ -21,23 +21,29 @@ class TransactionProvider with ChangeNotifier {
 
   double get totalEntradas => entradas.fold(0.0, (sum, tx) => sum + tx.amount);
   double get totalSaidas => saidas.fold(0.0, (sum, tx) => sum + tx.amount);
-  double get saldo => totalEntradas - totalSaidas;
+
+
+  double get saldo => totalEntradas - totalSaidas - totalInvestido;
+
+  double get saldoDisponivelInvestimento => totalEntradas - totalSaidas - totalInvestido;
+
   double get totalInvestido => investimentos.fold(0.0, (sum, tx) => sum + tx.amount);
-  double get saldoDisponivelInvestimento => saldo;
+
 
   double calculateBalance() {
     final totalEntradas = entradas.fold(0.0, (sum, tx) => sum + tx.amount);
     final totalSaidas = saidas.fold(0.0, (sum, tx) => sum + tx.amount);
-    return totalEntradas - totalSaidas;}
+    final totalInvestimentos = investimentos.fold(0.0, (sum, tx) => sum + tx.amount);
+    return totalEntradas - totalSaidas - totalInvestimentos;}
 
   TransactionProvider() {
     loadTransactions();
   }
 
   Future<void> addTransaction(Transaction tx) async {
-    if (tx.isFutureGoal && tx.amount > saldoDisponivelInvestimento) {
+    if (tx.isFutureGoal && tx.amount > (totalEntradas - totalSaidas - totalInvestido + (tx.id != null ? 0 : tx.amount))) {
       throw Exception('Valor do investimento (R\$${tx.amount.toStringAsFixed(2)}) '
-          'excede o saldo disponível (R\$${saldoDisponivelInvestimento.toStringAsFixed(2)})');
+          'excede o saldo disponível (R\$${(totalEntradas - totalSaidas - totalInvestido).toStringAsFixed(2)})');
     }
 
     _transactions.add(tx);
@@ -48,7 +54,10 @@ class TransactionProvider with ChangeNotifier {
   Future<void> updateTransaction(String id, Transaction updatedTx) async {
     final index = _transactions.indexWhere((tx) => tx.id == id);
     if (index >= 0) {
-      if (updatedTx.isFutureGoal && updatedTx.amount > saldoDisponivelInvestimento + _transactions[index].amount) {
+      final oldTx = _transactions[index];
+      final available = totalEntradas - totalSaidas - totalInvestido + oldTx.amount;
+
+      if (updatedTx.isFutureGoal && updatedTx.amount > available) {
         throw Exception('Valor atualizado excede o saldo disponível');
       }
 
