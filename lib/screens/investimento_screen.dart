@@ -136,7 +136,7 @@ class InvestimentoScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildInvestimentoChart(List<Transaction> investimentos) {
+  Widget _buildInvestimentoChart(List<FinanceTransaction> investimentos) {
     if (investimentos.isEmpty) {
       return const Center(
         child: Text(
@@ -247,7 +247,7 @@ class InvestimentoScreen extends StatelessWidget {
             onPressed: () async {
               if (_formKey.currentState!.validate()) {
                 try {
-                  final newTx = Transaction(
+                  final newTx = FinanceTransaction(
                     id: DateTime.now().toString(),
                     title: _titleController.text,
                     amount: double.parse(_amountController.text),

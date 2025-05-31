@@ -1,45 +1,43 @@
 enum TransactionType { entrada, saida, investimento }
 
-class Transaction {
+class FinanceTransaction {
   final String id;
   final String title;
   final double amount;
   final DateTime date;
   final String category;
   final TransactionType type;
-  final bool isFutureGoal; // NOVO
+  final bool isFutureGoal;
 
-  Transaction({
+  FinanceTransaction({
     required this.id,
     required this.title,
     required this.amount,
     required this.date,
     required this.category,
     required this.type,
-    this.isFutureGoal = false, // NOVO
+    this.isFutureGoal = false,
   });
 
-  Map<String, dynamic> toJson() => {
+  Map<String, dynamic> toDatabaseMap() => {
     'id': id,
     'title': title,
     'amount': amount,
     'date': date.toIso8601String(),
     'category': category,
-    'type': type.name,
-    'isFutureGoal': isFutureGoal, // NOVO
+    'typeIndex': type.index, // Nome diferente para evitar conflitos
+    'isFutureGoalInt': isFutureGoal ? 1 : 0, // Nome ajustado
   };
 
-  factory Transaction.fromJson(Map<String, dynamic> json) {
-    return Transaction(
-      id: json['id'],
-      title: json['title'],
-      amount: json['amount'],
-      date: DateTime.parse(json['date']),
-      category: json['category'],
-      type: json['type'] == 'entrada'
-          ? TransactionType.entrada
-          : TransactionType.saida,
-      isFutureGoal: json['isFutureGoal'] ?? false, // NOVO
+  factory FinanceTransaction.fromDatabaseMap(Map<String, dynamic> map) {
+    return FinanceTransaction(
+      id: map['id'],
+      title: map['title'],
+      amount: map['amount'],
+      date: DateTime.parse(map['date']),
+      category: map['category'],
+      type: TransactionType.values[map['typeIndex']], // Nome ajustado
+      isFutureGoal: map['isFutureGoalInt'] == 1, // Nome ajustado
     );
   }
 }

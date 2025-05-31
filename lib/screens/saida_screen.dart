@@ -74,7 +74,7 @@ class _SaidaFormState extends State<SaidaForm> {
 
     if (title.isEmpty || amount <= 0) return;
 
-    final newTx = Transaction(
+    final newTx = FinanceTransaction(
       id: DateTime.now().toString(),
       title: title,
       amount: amount,
@@ -207,7 +207,7 @@ class _SaidaFormState extends State<SaidaForm> {
 
 
 class TransactionItem extends StatelessWidget {
-  final Transaction transaction;
+  final FinanceTransaction transaction;
   final VoidCallback onDelete;
 
   const TransactionItem({

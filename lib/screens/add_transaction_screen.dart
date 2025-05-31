@@ -39,7 +39,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
 
     if (title.isEmpty || amount <= 0) return;
 
-    final newTx = Transaction(
+    final newTx = FinanceTransaction(
       id: DateTime.now().toString(),
       title: title,
       amount: amount,

@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import '../models/transaction.dart';
 import '../providers/transaction_provider.dart';
 
-void showEditDialog(BuildContext context, Transaction tx) {
+void showEditDialog(BuildContext context, FinanceTransaction tx) {
   final titleController = TextEditingController(text: tx.title);
   final amountController = TextEditingController(text: tx.amount.toString());
 
@@ -47,7 +47,7 @@ void showEditDialog(BuildContext context, Transaction tx) {
                 return;
               }
 
-              final updatedTx = Transaction(
+              final updatedTx = FinanceTransaction(
                 id: tx.id,
                 title: newTitle,
                 amount: newAmount,
