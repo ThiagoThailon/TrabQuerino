@@ -124,22 +124,30 @@ class _EntradaFormState extends State<EntradaForm> {
 
     if (title.isEmpty || amount <= 0) return;
 
+    final provider = Provider.of<TransactionProvider>(context, listen: false);
+    final now = DateTime.now();
+
+    // ✅ Validação: só permite adicionar se o período selecionado for o mês e ano atual
+    if (provider.currentMonth != now.month || provider.currentYear != now.year) {
+      print('Só é possível adicionar receitas no mês e ano atual.');
+      return;  // Bloqueia a adição
+    }
+
     final newTx = FinanceTransaction(
       id: DateTime.now().toString(),
       title: title,
       amount: amount,
-      date: DateTime.now(),
+      date: now,
       category: 'Salário',
       type: TransactionType.entrada,
       isFutureGoal: false,
     );
 
-    Provider.of<TransactionProvider>(context, listen: false).addTransaction(newTx);
+    provider.addTransaction(newTx);
 
     _titleController.clear();
     _amountController.clear();
   }
-
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -211,3 +219,4 @@ class _EntradaFormState extends State<EntradaForm> {
     );
   }
 }
+

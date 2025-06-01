@@ -62,11 +62,18 @@ class _SaidaFormState extends State<SaidaForm> {
     final title = _titleController.text;
     final amount = double.tryParse(_amountController.text) ?? 0.0;
     final provider = Provider.of<TransactionProvider>(context, listen: false);
+    final now = DateTime.now();
 
-    // Calcula o saldo atual
+    // ✅ Validação: só permite adicionar se o período selecionado for o mês e ano atual
+    if (provider.currentMonth != now.month || provider.currentYear != now.year) {
+      print('Só é possível adicionar despesas no mês e ano atual.');
+      return;  // Bloqueia a adição
+    }
+
+    // ✅ Calcula o saldo atual
     final saldoAtual = provider.calculateBalance();
 
-    // Validação do saldo
+    // ✅ Validação do saldo
     if (amount > saldoAtual) {
       _showSaldoInsuficienteDialog(saldoAtual);
       return;
@@ -78,7 +85,7 @@ class _SaidaFormState extends State<SaidaForm> {
       id: DateTime.now().toString(),
       title: title,
       amount: amount,
-      date: DateTime.now(),
+      date: now,
       category: _selectedCategory,
       type: TransactionType.saida,
       isFutureGoal: false,
@@ -88,7 +95,6 @@ class _SaidaFormState extends State<SaidaForm> {
     _titleController.clear();
     _amountController.clear();
   }
-
   void _showSaldoInsuficienteDialog(double saldoAtual) {
     showDialog(
       context: context,

@@ -12,7 +12,7 @@ class InvestimentoScreen extends StatelessWidget {
     final txProvider = Provider.of<TransactionProvider>(context);
     final investimentos = txProvider.investimentos;
     final totalInvestido = txProvider.totalInvestido;
-   // final saldo = txProvider.saldo;
+    // final saldo = txProvider.saldo;
     final saldoDisponivel = txProvider.saldoDisponivelInvestimento;
 
     return Scaffold(
@@ -107,7 +107,8 @@ class InvestimentoScreen extends StatelessWidget {
                     itemBuilder: (ctx, index) {
                       final tx = investimentos[index];
                       return ListTile(
-                        leading: const Icon(Icons.trending_up, color: Colors.blue),
+                        leading: const Icon(
+                            Icons.trending_up, color: Colors.blue),
                         title: Text(tx.title),
                         subtitle: Text(tx.category),
                         trailing: Text('R\$ ${tx.amount.toStringAsFixed(2)}'),
@@ -123,11 +124,24 @@ class InvestimentoScreen extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: ElevatedButton.icon(
-              icon: const Icon(Icons.add),
-              label: const Text('Novo Investimento'),
-              onPressed: () => _showAddInvestimentoDialog(context),
               style: ElevatedButton.styleFrom(
-                minimumSize: const Size(double.infinity, 50),
+                backgroundColor: Colors.blue,
+                minimumSize: const Size(320, 48), // Azul no lugar do verde
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(
+                      12), // Mesmo arredondamento
+                ),
+              ),
+              onPressed: () => _showAddInvestimentoDialog(context),
+              // Sua função
+              icon: const Icon(Icons.add, color: Colors.white),
+              // Ícone branco
+              label: const Text(
+                'Novo Investimento',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
           ),
@@ -135,7 +149,7 @@ class InvestimentoScreen extends StatelessWidget {
       ),
     );
   }
-
+}
   Widget _buildInvestimentoChart(List<FinanceTransaction> investimentos) {
     if (investimentos.isEmpty) {
       return const Center(
@@ -209,7 +223,8 @@ class InvestimentoScreen extends StatelessWidget {
                   controller: _amountController,
                   decoration: InputDecoration(
                     labelText: 'Valor (R\$)',
-                    hintText: 'Saldo disponível: R\$${saldoDisponivel.toStringAsFixed(2)}',
+                    hintText:
+                    'Saldo disponível: R\$${saldoDisponivel.toStringAsFixed(2)}',
                   ),
                   keyboardType: TextInputType.number,
                   validator: (value) {
@@ -240,18 +255,36 @@ class InvestimentoScreen extends StatelessWidget {
         ),
         actions: [
           TextButton(
+            style: TextButton.styleFrom(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
             onPressed: () => Navigator.of(ctx).pop(),
             child: const Text('Cancelar'),
           ),
-          ElevatedButton(
+          TextButton(
+            style: TextButton.styleFrom(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
             onPressed: () async {
               if (_formKey.currentState!.validate()) {
+                final now = DateTime.now();
+                // ✅ Validação: só permite adicionar se o período selecionado for o mês e ano atual
+                if (txProvider.currentMonth != now.month ||
+                    txProvider.currentYear != now.year) {
+                  print('Só é possível adicionar investimentos no mês e ano atual.');
+                  return;  // Bloqueia a adição
+                }
+
                 try {
                   final newTx = FinanceTransaction(
                     id: DateTime.now().toString(),
                     title: _titleController.text,
                     amount: double.parse(_amountController.text),
-                    date: DateTime.now(),
+                    date: now,
                     category: _selectedCategory,
                     type: TransactionType.investimento,
                     isFutureGoal: true,
@@ -277,4 +310,3 @@ class InvestimentoScreen extends StatelessWidget {
       ),
     );
   }
-}

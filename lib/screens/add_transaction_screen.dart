@@ -50,9 +50,9 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
       month: now.month,  // Adiciona o mês atual
       year: now.year,    // Adiciona o ano atual
     );
-
     Provider.of<TransactionProvider>(context, listen: false)
         .addTransaction(newTx);
+
 
     Navigator.of(context).pop();
   }
