@@ -2,12 +2,23 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/transaction_provider.dart';
 import '../models/transaction.dart';
-
+import '../widgets/month.dart';
+// financial_summary.dart
 class FinancialSummary extends StatelessWidget {
   const FinancialSummary({super.key});
 
   @override
   Widget build(BuildContext context) {
+    return Column(
+      children: [
+        const MonthYearPicker(), // Adiciona o seletor de mês/ano
+        const SizedBox(height: 8),
+        _buildSummaryCards(context),
+      ],
+    );
+  }
+
+  Widget _buildSummaryCards(BuildContext context) {
     final provider = Provider.of<TransactionProvider>(context);
     final entradas = provider.totalEntradas;
     final saidas = provider.totalSaidas;
@@ -44,7 +55,6 @@ class FinancialSummary extends StatelessWidget {
     );
   }
 }
-
 class _SummaryCard extends StatelessWidget {
   final Color color;
   final IconData icon;

@@ -3,20 +3,46 @@ import '../models/transaction.dart';
 import '../database/database_helper.dart';
 
 class TransactionProvider with ChangeNotifier {
-  final List<FinanceTransaction> _transactions = [];
+  final List<FinanceTransaction> _transactions = []; // Lista de todas as transações
 
+  int _currentMonth = DateTime.now().month;
+  int _currentYear = DateTime.now().year;
+
+  // Getter para a lista completa de transações
   List<FinanceTransaction> get transactions => [..._transactions];
 
-  List<FinanceTransaction> get entradas => _transactions
+  // Getter para o mês atual
+  int get currentMonth => _currentMonth;
+
+  // Getter para o ano atual
+  int get currentYear => _currentYear;
+
+  // Método para mudar o mês/ano atual
+  void setCurrentPeriod(int month, int year) {
+    _currentMonth = month;
+    _currentYear = year;
+    notifyListeners();
+  }
+
+  // Filtro para transações do período atual
+  List<FinanceTransaction> get currentPeriodTransactions => _transactions
+      .where((t) => t.month == _currentMonth && t.year == _currentYear)
+      .toList();
+
+  // Getter para entradas do período atual
+  List<FinanceTransaction> get entradas => currentPeriodTransactions
       .where((t) => t.type == TransactionType.entrada && !t.isFutureGoal)
       .toList();
 
-  List<FinanceTransaction> get saidas => _transactions
+  // Getter para saídas do período atual
+  List<FinanceTransaction> get saidas => currentPeriodTransactions
       .where((t) => t.type == TransactionType.saida && !t.isFutureGoal)
       .toList();
 
-  List<FinanceTransaction> get investimentos =>
-      _transactions.where((t) => t.isFutureGoal).toList();
+  // Getter para investimentos do período atual
+  List<FinanceTransaction> get investimentos => currentPeriodTransactions
+      .where((t) => t.isFutureGoal)
+      .toList();
 
   double get totalEntradas => entradas.fold(0.0, (sum, tx) => sum + tx.amount);
   double get totalSaidas => saidas.fold(0.0, (sum, tx) => sum + tx.amount);

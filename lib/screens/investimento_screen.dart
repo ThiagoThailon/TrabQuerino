@@ -12,7 +12,7 @@ class InvestimentoScreen extends StatelessWidget {
     final txProvider = Provider.of<TransactionProvider>(context);
     final investimentos = txProvider.investimentos;
     final totalInvestido = txProvider.totalInvestido;
-    final saldo = txProvider.saldo;
+   // final saldo = txProvider.saldo;
     final saldoDisponivel = txProvider.saldoDisponivelInvestimento;
 
     return Scaffold(

@@ -28,7 +28,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
 
   final List<String> _entradaCategories = [
     'Salário',
-    'Freela',
+    'Freelance',
     'Rendimentos',
     'Outros'
   ];
@@ -36,6 +36,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
   void _submitForm() {
     final title = _titleController.text;
     final amount = double.tryParse(_amountController.text) ?? 0.0;
+    final now = DateTime.now();
 
     if (title.isEmpty || amount <= 0) return;
 
@@ -43,9 +44,11 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
       id: DateTime.now().toString(),
       title: title,
       amount: amount,
-      date: DateTime.now(),
+      date: now,
       category: _selectedCategory,
       type: _selectedType,
+      month: now.month,  // Adiciona o mês atual
+      year: now.year,    // Adiciona o ano atual
     );
 
     Provider.of<TransactionProvider>(context, listen: false)
@@ -61,7 +64,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
         : _entradaCategories;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Nteste')),
+      appBar: AppBar(title: const Text('Adicionar Transação')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: SingleChildScrollView(

@@ -1,3 +1,4 @@
+// transaction.dart
 enum TransactionType { entrada, saida, investimento }
 
 class FinanceTransaction {
@@ -8,6 +9,8 @@ class FinanceTransaction {
   final String category;
   final TransactionType type;
   final bool isFutureGoal;
+  final int month; // Novo campo para o mês
+  final int year;  // Novo campo para o ano
 
   FinanceTransaction({
     required this.id,
@@ -17,7 +20,10 @@ class FinanceTransaction {
     required this.category,
     required this.type,
     this.isFutureGoal = false,
-  });
+    int? month, // Parâmetro opcional
+    int? year,  // Parâmetro opcional
+  }) : month = month ?? date.month, // Usa o mês da data se não for fornecido
+        year = year ?? date.year;    // Usa o ano da data se não for fornecido
 
   Map<String, dynamic> toDatabaseMap() => {
     'id': id,
@@ -25,8 +31,10 @@ class FinanceTransaction {
     'amount': amount,
     'date': date.toIso8601String(),
     'category': category,
-    'typeIndex': type.index, // Nome diferente para evitar conflitos
-    'isFutureGoalInt': isFutureGoal ? 1 : 0, // Nome ajustado
+    'typeIndex': type.index,
+    'isFutureGoalInt': isFutureGoal ? 1 : 0,
+    'month': month, // Novo campo
+    'year': year,   // Novo campo
   };
 
   factory FinanceTransaction.fromDatabaseMap(Map<String, dynamic> map) {
@@ -36,8 +44,10 @@ class FinanceTransaction {
       amount: map['amount'],
       date: DateTime.parse(map['date']),
       category: map['category'],
-      type: TransactionType.values[map['typeIndex']], // Nome ajustado
-      isFutureGoal: map['isFutureGoalInt'] == 1, // Nome ajustado
+      type: TransactionType.values[map['typeIndex']],
+      isFutureGoal: map['isFutureGoalInt'] == 1,
+      month: map['month'] ?? DateTime.parse(map['date']).month, // Compatibilidade com versões antigas
+      year: map['year'] ?? DateTime.parse(map['date']).year,    // Compatibilidade com versões antigas
     );
   }
 }

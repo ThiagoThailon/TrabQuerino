@@ -55,7 +55,10 @@ void showEditDialog(BuildContext context, FinanceTransaction tx) {
                 category: tx.category,
                 type: tx.type,
                 isFutureGoal: tx.isFutureGoal,
+                month: tx.date.month,  // Mantém o mês original
+                year: tx.date.year,    // Mantém o ano original
               );
+
 
               Provider.of<TransactionProvider>(context, listen: false)
                   .updateTransaction(tx.id, updatedTx);

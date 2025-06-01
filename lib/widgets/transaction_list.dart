@@ -1,18 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/transaction_provider.dart';
-
+// trans
+//
+// action_list.dart
 class TransactionList extends StatelessWidget {
   const TransactionList({super.key});
 
   @override
   Widget build(BuildContext context) {
     final txProvider = Provider.of<TransactionProvider>(context);
-    final transactions = txProvider.transactions;
+    final transactions = txProvider.currentPeriodTransactions; // Usa currentPeriodTransactions
 
     if (transactions.isEmpty) {
       return const Center(
-        child: Text('Nenhuma transação registrada ainda.'),
+        child: Text('Nenhuma transação registrada para este período.'),
       );
     }
 

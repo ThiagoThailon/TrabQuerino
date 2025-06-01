@@ -29,8 +29,10 @@ class DatabaseHelper {
             amount REAL,
             date TEXT,
             category TEXT,
-            typeIndex INTEGER, -- Armazena índice do enum TransactionType
-            isFutureGoalInt INTEGER -- Armazena booleano como INTEGER
+            typeIndex INTEGER,
+            isFutureGoalInt INTEGER,
+            month INTEGER,  -- Novo campo
+            year INTEGER   -- Novo campo
           )
         ''');
       },
